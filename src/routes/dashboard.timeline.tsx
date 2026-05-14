@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle2, Circle, AlertCircle, X, ChevronLeft, Flame, StickyNote } from "lucide-react";
+import { Calendar, CheckCircle2, Circle, AlertCircle, X, ChevronLeft, Flame, StickyNote, Check } from "lucide-react";
+import { toast } from "sonner";
 import { PageShell } from "@/components/page-shell";
 import { useCareer } from "@/lib/career-context";
 import type { Milestone } from "@/lib/career-data";
