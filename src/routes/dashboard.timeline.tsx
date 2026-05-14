@@ -218,10 +218,23 @@ function TimelinePage() {
                         />
                       </div>
 
-                      <div className="mt-6 flex gap-2">
-                        <Button className="flex-1 bg-primary hover:bg-primary/90">Mark Day Complete</Button>
-                        <Button variant="outline" onClick={() => setActiveDay(null)}>Back to Week</Button>
-                      </div>
+                      {(() => {
+                        const isDone = (completedDays[active.id] ?? []).includes(activeDay!);
+                        return (
+                          <div className="mt-6 flex gap-2">
+                            <Button
+                              className={`flex-1 ${isDone ? "bg-[oklch(0.78_0.17_160)] hover:bg-[oklch(0.78_0.17_160)]/90 text-background" : "bg-primary hover:bg-primary/90"}`}
+                              onClick={() => {
+                                toggleDayComplete(active.id, activeDay!);
+                                toast.success(isDone ? `Day ${activeDay} reopened` : `Day ${activeDay} marked complete`);
+                              }}
+                            >
+                              {isDone ? <><Check className="h-4 w-4" /> Completed — Undo</> : "Mark Day Complete"}
+                            </Button>
+                            <Button variant="outline" onClick={() => setActiveDay(null)}>Back to Week</Button>
+                          </div>
+                        );
+                      })()}
                     </motion.div>
                   )}
                 </AnimatePresence>
