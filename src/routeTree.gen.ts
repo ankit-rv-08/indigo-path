@@ -9,38 +9,140 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ArchitectRouteImport } from './routes/architect'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTimelineRouteImport } from './routes/dashboard.timeline'
+import { Route as DashboardPresenceRouteImport } from './routes/dashboard.presence'
+import { Route as DashboardPipelineRouteImport } from './routes/dashboard.pipeline'
+import { Route as DashboardOutreachRouteImport } from './routes/dashboard.outreach'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchitectRoute = ArchitectRouteImport.update({
+  id: '/architect',
+  path: '/architect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTimelineRoute = DashboardTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPresenceRoute = DashboardPresenceRouteImport.update({
+  id: '/presence',
+  path: '/presence',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPipelineRoute = DashboardPipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOutreachRoute = DashboardOutreachRouteImport.update({
+  id: '/outreach',
+  path: '/outreach',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/architect': typeof ArchitectRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
+  '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/architect': typeof ArchitectRoute
+  '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
+  '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/architect': typeof ArchitectRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
+  '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/architect'
+    | '/dashboard'
+    | '/dashboard/outreach'
+    | '/dashboard/pipeline'
+    | '/dashboard/presence'
+    | '/dashboard/timeline'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/architect'
+    | '/dashboard/outreach'
+    | '/dashboard/pipeline'
+    | '/dashboard/presence'
+    | '/dashboard/timeline'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/architect'
+    | '/dashboard'
+    | '/dashboard/outreach'
+    | '/dashboard/pipeline'
+    | '/dashboard/presence'
+    | '/dashboard/timeline'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ArchitectRoute: typeof ArchitectRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/architect': {
+      id: '/architect'
+      path: '/architect'
+      fullPath: '/architect'
+      preLoaderRoute: typeof ArchitectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +150,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/timeline': {
+      id: '/dashboard/timeline'
+      path: '/timeline'
+      fullPath: '/dashboard/timeline'
+      preLoaderRoute: typeof DashboardTimelineRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/presence': {
+      id: '/dashboard/presence'
+      path: '/presence'
+      fullPath: '/dashboard/presence'
+      preLoaderRoute: typeof DashboardPresenceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/pipeline': {
+      id: '/dashboard/pipeline'
+      path: '/pipeline'
+      fullPath: '/dashboard/pipeline'
+      preLoaderRoute: typeof DashboardPipelineRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/outreach': {
+      id: '/dashboard/outreach'
+      path: '/outreach'
+      fullPath: '/dashboard/outreach'
+      preLoaderRoute: typeof DashboardOutreachRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardOutreachRoute: typeof DashboardOutreachRoute
+  DashboardPipelineRoute: typeof DashboardPipelineRoute
+  DashboardPresenceRoute: typeof DashboardPresenceRoute
+  DashboardTimelineRoute: typeof DashboardTimelineRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardOutreachRoute: DashboardOutreachRoute,
+  DashboardPipelineRoute: DashboardPipelineRoute,
+  DashboardPresenceRoute: DashboardPresenceRoute,
+  DashboardTimelineRoute: DashboardTimelineRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ArchitectRoute: ArchitectRoute,
+  DashboardRoute: DashboardRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
