@@ -75,11 +75,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Career Command — Autonomous Career Architect" },
       { name: "description", content: "Personal AI OS for career intelligence: presence, outreach, execution pipeline, and tactical timeline." },
       { name: "author", content: "Career.OS" },
-      { property: "og:title", content: "Career Command" },
-      { property: "og:description", content: "Personal AI OS for career intelligence." },
+      { property: "og:title", content: "Career Command — Autonomous Career Architect" },
+      { property: "og:description", content: "Personal AI OS for career intelligence: presence, outreach, execution pipeline, and tactical timeline." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Career Command — Autonomous Career Architect" },
+      { name: "twitter:description", content: "Personal AI OS for career intelligence: presence, outreach, execution pipeline, and tactical timeline." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/589b4c0f-48e5-4a15-bf06-68fa11e970b4" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/589b4c0f-48e5-4a15-bf06-68fa11e970b4" },
     ],
     links: [
       {
