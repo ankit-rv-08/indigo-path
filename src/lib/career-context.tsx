@@ -17,27 +17,33 @@ interface CareerCtx {
   tasks: Task[];
   milestones: Milestone[];
   notes: Record<string, string>;
+  completedDays: Record<string, number[]>;
   setNote: (id: string, v: string) => void;
   toggleSubtask: (taskId: string, subId: string) => void;
   setTaskStatus: (taskId: string, s: TaskStatus) => void;
   addTime: (taskId: string, mins: number) => void;
   addRecruiterTag: (id: string, tag: string) => void;
   removeRecruiterTag: (id: string, tag: string) => void;
+  toggleDayComplete: (milestoneId: string, day: number) => void;
+  milestoneProgress: (milestoneId: string) => { done: number; total: number; pct: number };
   dsaIncomplete: boolean;
   missingCachingMilestone: boolean;
 }
 
 const Ctx = createContext<CareerCtx | null>(null);
 
+const TOTAL_DAYS = 7;
+
 export function CareerProvider({ children }: { children: ReactNode }) {
   const [metrics] = useState(initialMetrics);
   const [recruiters, setRecruiters] = useState(initialRecruiters);
   const [tasks, setTasks] = useState(initialTasks);
-  const [milestones] = useState(buildMilestones);
+  const [milestones, setMilestones] = useState(buildMilestones);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [completedDays, setCompletedDays] = useState<Record<string, number[]>>({});
 
   const value = useMemo<CareerCtx>(() => ({
-    metrics, recruiters, tasks, milestones, notes,
+    metrics, recruiters, tasks, milestones, notes, completedDays,
     setNote: (id, v) => setNotes(p => ({ ...p, [id]: v })),
     toggleSubtask: (taskId, subId) => setTasks(p => p.map(t =>
       t.id === taskId ? { ...t, subtasks: t.subtasks.map(s => s.id === subId ? { ...s, done: !s.done } : s) } : t
@@ -46,9 +52,30 @@ export function CareerProvider({ children }: { children: ReactNode }) {
     addTime: (taskId, mins) => setTasks(p => p.map(t => t.id === taskId ? { ...t, timeSpent: t.timeSpent + mins } : t)),
     addRecruiterTag: (id, tag) => setRecruiters(p => p.map(r => r.id === id ? { ...r, tags: Array.from(new Set([...r.tags, tag])) } : r)),
     removeRecruiterTag: (id, tag) => setRecruiters(p => p.map(r => r.id === id ? { ...r, tags: r.tags.filter(t => t !== tag) } : r)),
+    toggleDayComplete: (milestoneId, day) => {
+      setCompletedDays(prev => {
+        const cur = prev[milestoneId] ?? [];
+        const next = cur.includes(day) ? cur.filter(d => d !== day) : [...cur, day].sort((a, b) => a - b);
+        const updated = { ...prev, [milestoneId]: next };
+        setMilestones(ms => ms.map(m => {
+          if (m.id !== milestoneId) return m;
+          if (next.length >= TOTAL_DAYS) return { ...m, status: "done" };
+          if (next.length > 0 && (m.status === "upcoming" || m.status === "missed" || m.status === "done")) {
+            return { ...m, status: "current" };
+          }
+          if (next.length === 0 && m.status === "done") return { ...m, status: "current" };
+          return m;
+        }));
+        return updated;
+      });
+    },
+    milestoneProgress: (milestoneId) => {
+      const done = (completedDays[milestoneId] ?? []).length;
+      return { done, total: TOTAL_DAYS, pct: Math.round((done / TOTAL_DAYS) * 100) };
+    },
     dsaIncomplete: tasks.some(t => t.isDsaDaily && t.status !== "completed"),
     missingCachingMilestone: milestones.some(m => m.status === "missed" && m.title.toLowerCase().includes("caching")),
-  }), [metrics, recruiters, tasks, milestones, notes]);
+  }), [metrics, recruiters, tasks, milestones, notes, completedDays]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
