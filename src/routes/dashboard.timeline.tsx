@@ -55,7 +55,7 @@ function buildDayPlans(m: Milestone): DayPlan[] {
 }
 
 function TimelinePage() {
-  const { milestones, notes, setNote } = useCareer();
+  const { milestones, notes, setNote, completedDays, toggleDayComplete, milestoneProgress } = useCareer();
   const [active, setActive] = useState<Milestone | null>(null);
   const [activeDay, setActiveDay] = useState<number | null>(null);
 
