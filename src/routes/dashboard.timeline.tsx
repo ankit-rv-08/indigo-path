@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle2, Circle, AlertCircle, X, ChevronLeft, Flame, StickyNote } from "lucide-react";
+import { Calendar, CheckCircle2, Circle, AlertCircle, X, ChevronLeft, Flame, StickyNote, Check } from "lucide-react";
+import { toast } from "sonner";
 import { PageShell } from "@/components/page-shell";
 import { useCareer } from "@/lib/career-context";
 import type { Milestone } from "@/lib/career-data";
@@ -54,7 +55,7 @@ function buildDayPlans(m: Milestone): DayPlan[] {
 }
 
 function TimelinePage() {
-  const { milestones, notes, setNote } = useCareer();
+  const { milestones, notes, setNote, completedDays, toggleDayComplete, milestoneProgress } = useCareer();
   const [active, setActive] = useState<Milestone | null>(null);
   const [activeDay, setActiveDay] = useState<number | null>(null);
 
@@ -83,9 +84,20 @@ function TimelinePage() {
                 <span className={`absolute left-5 grid h-7 w-7 place-items-center rounded-full bg-card ring-2 ${m.status === "current" ? "ring-primary shadow-glow" : "ring-border"}`}>
                   <Icon className={`h-4 w-4 ${color}`} />
                 </span>
-                <div className="flex-1 grid grid-cols-[80px_1fr_auto] items-center gap-3">
+                <div className="flex-1 grid grid-cols-[60px_1fr_auto_auto] items-center gap-3">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">W{m.week}</span>
-                  <span className="text-sm font-medium">{m.title}</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{m.title}</div>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <div className="h-1 w-24 overflow-hidden rounded-full bg-background/60 ring-1 ring-border">
+                        <div
+                          className={`h-full transition-all ${milestoneProgress(m.id).pct === 100 ? "bg-[oklch(0.78_0.17_160)]" : "bg-primary"}`}
+                          style={{ width: `${milestoneProgress(m.id).pct}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{milestoneProgress(m.id).done}/{milestoneProgress(m.id).total}</span>
+                    </div>
+                  </div>
                   <span className="text-[10px] text-muted-foreground">{m.date}</span>
                 </div>
               </button>
@@ -133,18 +145,20 @@ function TimelinePage() {
                     <motion.div key="week" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Day-by-Day Breakdown</div>
                       <div className="mt-3 space-y-2">
-                        {dayPlans.map((d) => (
+                        {dayPlans.map((d) => {
+                          const isDone = (completedDays[active.id] ?? []).includes(d.day);
+                          return (
                           <button
                             key={d.day}
                             onClick={() => setActiveDay(d.day)}
-                            className="group flex w-full items-start gap-3 rounded-lg bg-background/40 p-3 text-left ring-1 ring-border transition hover:bg-background/60 hover:shadow-glow"
+                            className={`group flex w-full items-start gap-3 rounded-lg p-3 text-left ring-1 transition hover:shadow-glow ${isDone ? "bg-[oklch(0.78_0.17_160)]/10 ring-[oklch(0.78_0.17_160)]/40" : "bg-background/40 ring-border hover:bg-background/60"}`}
                           >
-                            <span className="grid h-9 w-9 flex-none place-items-center rounded-md bg-primary/15 text-xs font-bold text-primary ring-1 ring-primary/40">
-                              D{d.day}
+                            <span className={`grid h-9 w-9 flex-none place-items-center rounded-md text-xs font-bold ring-1 ${isDone ? "bg-[oklch(0.78_0.17_160)]/20 text-[oklch(0.78_0.17_160)] ring-[oklch(0.78_0.17_160)]/40" : "bg-primary/15 text-primary ring-primary/40"}`}>
+                              {isDone ? <Check className="h-4 w-4" /> : `D${d.day}`}
                             </span>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{d.focus}</span>
+                                <span className={`text-sm font-semibold ${isDone ? "line-through opacity-70" : ""}`}>{d.focus}</span>
                               </div>
                               <div className="mt-1 flex items-start gap-1.5 text-[11px] text-muted-foreground">
                                 <Flame className="mt-0.5 h-3 w-3 flex-none text-destructive" />
@@ -152,7 +166,8 @@ function TimelinePage() {
                               </div>
                             </div>
                           </button>
-                        ))}
+                          );
+                        })}
                       </div>
 
                       <div className="mt-6">
@@ -203,10 +218,23 @@ function TimelinePage() {
                         />
                       </div>
 
-                      <div className="mt-6 flex gap-2">
-                        <Button className="flex-1 bg-primary hover:bg-primary/90">Mark Day Complete</Button>
-                        <Button variant="outline" onClick={() => setActiveDay(null)}>Back to Week</Button>
-                      </div>
+                      {(() => {
+                        const isDone = (completedDays[active.id] ?? []).includes(activeDay!);
+                        return (
+                          <div className="mt-6 flex gap-2">
+                            <Button
+                              className={`flex-1 ${isDone ? "bg-[oklch(0.78_0.17_160)] hover:bg-[oklch(0.78_0.17_160)]/90 text-background" : "bg-primary hover:bg-primary/90"}`}
+                              onClick={() => {
+                                toggleDayComplete(active.id, activeDay!);
+                                toast.success(isDone ? `Day ${activeDay} reopened` : `Day ${activeDay} marked complete`);
+                              }}
+                            >
+                              {isDone ? <><Check className="h-4 w-4" /> Completed — Undo</> : "Mark Day Complete"}
+                            </Button>
+                            <Button variant="outline" onClick={() => setActiveDay(null)}>Back to Week</Button>
+                          </div>
+                        );
+                      })()}
                     </motion.div>
                   )}
                 </AnimatePresence>
