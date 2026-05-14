@@ -145,18 +145,20 @@ function TimelinePage() {
                     <motion.div key="week" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Day-by-Day Breakdown</div>
                       <div className="mt-3 space-y-2">
-                        {dayPlans.map((d) => (
+                        {dayPlans.map((d) => {
+                          const isDone = (completedDays[active.id] ?? []).includes(d.day);
+                          return (
                           <button
                             key={d.day}
                             onClick={() => setActiveDay(d.day)}
-                            className="group flex w-full items-start gap-3 rounded-lg bg-background/40 p-3 text-left ring-1 ring-border transition hover:bg-background/60 hover:shadow-glow"
+                            className={`group flex w-full items-start gap-3 rounded-lg p-3 text-left ring-1 transition hover:shadow-glow ${isDone ? "bg-[oklch(0.78_0.17_160)]/10 ring-[oklch(0.78_0.17_160)]/40" : "bg-background/40 ring-border hover:bg-background/60"}`}
                           >
-                            <span className="grid h-9 w-9 flex-none place-items-center rounded-md bg-primary/15 text-xs font-bold text-primary ring-1 ring-primary/40">
-                              D{d.day}
+                            <span className={`grid h-9 w-9 flex-none place-items-center rounded-md text-xs font-bold ring-1 ${isDone ? "bg-[oklch(0.78_0.17_160)]/20 text-[oklch(0.78_0.17_160)] ring-[oklch(0.78_0.17_160)]/40" : "bg-primary/15 text-primary ring-primary/40"}`}>
+                              {isDone ? <Check className="h-4 w-4" /> : `D${d.day}`}
                             </span>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{d.focus}</span>
+                                <span className={`text-sm font-semibold ${isDone ? "line-through opacity-70" : ""}`}>{d.focus}</span>
                               </div>
                               <div className="mt-1 flex items-start gap-1.5 text-[11px] text-muted-foreground">
                                 <Flame className="mt-0.5 h-3 w-3 flex-none text-destructive" />
@@ -164,7 +166,8 @@ function TimelinePage() {
                               </div>
                             </div>
                           </button>
-                        ))}
+                          );
+                        })}
                       </div>
 
                       <div className="mt-6">
