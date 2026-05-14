@@ -84,9 +84,20 @@ function TimelinePage() {
                 <span className={`absolute left-5 grid h-7 w-7 place-items-center rounded-full bg-card ring-2 ${m.status === "current" ? "ring-primary shadow-glow" : "ring-border"}`}>
                   <Icon className={`h-4 w-4 ${color}`} />
                 </span>
-                <div className="flex-1 grid grid-cols-[80px_1fr_auto] items-center gap-3">
+                <div className="flex-1 grid grid-cols-[60px_1fr_auto_auto] items-center gap-3">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">W{m.week}</span>
-                  <span className="text-sm font-medium">{m.title}</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{m.title}</div>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <div className="h-1 w-24 overflow-hidden rounded-full bg-background/60 ring-1 ring-border">
+                        <div
+                          className={`h-full transition-all ${milestoneProgress(m.id).pct === 100 ? "bg-[oklch(0.78_0.17_160)]" : "bg-primary"}`}
+                          style={{ width: `${milestoneProgress(m.id).pct}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{milestoneProgress(m.id).done}/{milestoneProgress(m.id).total}</span>
+                    </div>
+                  </div>
                   <span className="text-[10px] text-muted-foreground">{m.date}</span>
                 </div>
               </button>
