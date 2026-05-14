@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardPresenceRouteImport } from './routes/dashboard.presence'
+import { Route as DashboardOutreachRouteImport } from './routes/dashboard.outreach'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -34,15 +35,22 @@ const DashboardPresenceRoute = DashboardPresenceRouteImport.update({
   path: '/presence',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardOutreachRoute = DashboardOutreachRouteImport.update({
+  id: '/outreach',
+  path: '/outreach',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -50,15 +58,27 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/dashboard/presence' | '/dashboard/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/dashboard/outreach'
+    | '/dashboard/presence'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard/presence' | '/dashboard'
-  id: '__root__' | '/' | '/dashboard' | '/dashboard/presence' | '/dashboard/'
+  to: '/' | '/dashboard/outreach' | '/dashboard/presence' | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/dashboard/outreach'
+    | '/dashboard/presence'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,15 +116,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPresenceRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/outreach': {
+      id: '/dashboard/outreach'
+      path: '/outreach'
+      fullPath: '/dashboard/outreach'
+      preLoaderRoute: typeof DashboardOutreachRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
+  DashboardOutreachRoute: typeof DashboardOutreachRoute
   DashboardPresenceRoute: typeof DashboardPresenceRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardOutreachRoute: DashboardOutreachRoute,
   DashboardPresenceRoute: DashboardPresenceRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
