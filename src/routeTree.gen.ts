@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardPresenceRouteImport } from './routes/dashboard.presence'
+import { Route as DashboardPipelineRouteImport } from './routes/dashboard.pipeline'
 import { Route as DashboardOutreachRouteImport } from './routes/dashboard.outreach'
 
 const DashboardRoute = DashboardRouteImport.update({
@@ -35,6 +36,11 @@ const DashboardPresenceRoute = DashboardPresenceRouteImport.update({
   path: '/presence',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardPipelineRoute = DashboardPipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardOutreachRoute = DashboardOutreachRouteImport.update({
   id: '/outreach',
   path: '/outreach',
@@ -45,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/outreach': typeof DashboardOutreachRoute
+  '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -68,15 +77,22 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/dashboard/outreach'
+    | '/dashboard/pipeline'
     | '/dashboard/presence'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard/outreach' | '/dashboard/presence' | '/dashboard'
+  to:
+    | '/'
+    | '/dashboard/outreach'
+    | '/dashboard/pipeline'
+    | '/dashboard/presence'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/dashboard/outreach'
+    | '/dashboard/pipeline'
     | '/dashboard/presence'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -116,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPresenceRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/pipeline': {
+      id: '/dashboard/pipeline'
+      path: '/pipeline'
+      fullPath: '/dashboard/pipeline'
+      preLoaderRoute: typeof DashboardPipelineRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/outreach': {
       id: '/dashboard/outreach'
       path: '/outreach'
@@ -128,12 +151,14 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardOutreachRoute: typeof DashboardOutreachRoute
+  DashboardPipelineRoute: typeof DashboardPipelineRoute
   DashboardPresenceRoute: typeof DashboardPresenceRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardOutreachRoute: DashboardOutreachRoute,
+  DashboardPipelineRoute: DashboardPipelineRoute,
   DashboardPresenceRoute: DashboardPresenceRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
