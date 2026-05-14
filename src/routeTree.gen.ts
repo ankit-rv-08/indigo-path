@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTimelineRouteImport } from './routes/dashboard.timeline'
 import { Route as DashboardPresenceRouteImport } from './routes/dashboard.presence'
 import { Route as DashboardPipelineRouteImport } from './routes/dashboard.pipeline'
 import { Route as DashboardOutreachRouteImport } from './routes/dashboard.outreach'
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTimelineRoute = DashboardTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardPresenceRoute = DashboardPresenceRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/dashboard/outreach': typeof DashboardOutreachRoute
   '/dashboard/pipeline': typeof DashboardPipelineRoute
   '/dashboard/presence': typeof DashboardPresenceRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/dashboard/outreach'
     | '/dashboard/pipeline'
     | '/dashboard/presence'
+    | '/dashboard/timeline'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/dashboard/outreach'
     | '/dashboard/pipeline'
     | '/dashboard/presence'
+    | '/dashboard/timeline'
     | '/dashboard'
   id:
     | '__root__'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/dashboard/outreach'
     | '/dashboard/pipeline'
     | '/dashboard/presence'
+    | '/dashboard/timeline'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -125,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/timeline': {
+      id: '/dashboard/timeline'
+      path: '/timeline'
+      fullPath: '/dashboard/timeline'
+      preLoaderRoute: typeof DashboardTimelineRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/presence': {
       id: '/dashboard/presence'
       path: '/presence'
@@ -153,6 +172,7 @@ interface DashboardRouteChildren {
   DashboardOutreachRoute: typeof DashboardOutreachRoute
   DashboardPipelineRoute: typeof DashboardPipelineRoute
   DashboardPresenceRoute: typeof DashboardPresenceRoute
+  DashboardTimelineRoute: typeof DashboardTimelineRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -160,6 +180,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardOutreachRoute: DashboardOutreachRoute,
   DashboardPipelineRoute: DashboardPipelineRoute,
   DashboardPresenceRoute: DashboardPresenceRoute,
+  DashboardTimelineRoute: DashboardTimelineRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
